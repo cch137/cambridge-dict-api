@@ -1,5 +1,5 @@
-from flask import Flask, request, send_file, redirect, render_template, Blueprint
-import os, random, requests, json
+from flask import Flask, request, send_file, render_template
+import requests
 from bs4 import BeautifulSoup as bs
 
 
@@ -56,11 +56,6 @@ def route_api():
     return render_template('result.html', data=res), res['status_code']
   else:
     return res['preview'], res['status_code']
-
-@app.route('/random-bg')
-def route_random_bg():
-  _dir = 'static/background'
-  return send_file(f'{_dir}/{random.choice(os.listdir(_dir))}')
 
 @app.route('/favicon.ico')
 def route_favicon():

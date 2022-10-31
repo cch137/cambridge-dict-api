@@ -26,11 +26,6 @@
   </div>
   <a href="/admin137" class="pg-btm command to-admin-btn">admin dashboard</a>
   <script>
-    function random_64base(digit = 8) {
-      let s = '';
-      while (digit--) s += ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_')[Math.floor(Math.random()*64)];
-      return s;
-    };
     (() => {
       const searchBox = document.querySelector('input'), pathname = location.pathname;
       searchBox.onkeyup = (e) => {
