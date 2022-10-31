@@ -20,22 +20,42 @@ sess.headers = {
   'sec-fetch-site': 'same-origin'
 }
 
+def get_meaning(lang: str = 'english-chinese-simplified', text: str = '', try_again: bool = True):
+  reqt = sess.get(f"https://dictionary.cambridge.org/dictionary/{lang}/{text}")
+  soup = bs(reqt.text, 'html.parser')
+  try:
+    title = soup.find('span', {'class': 'hw dhw'}).string
+    meaning = [i.string for i in soup.find_all('span', {'class': 'trans dtrans dtrans-se break-cj'})]
+    if reqt.status_code == 404 or not title: raise 'Page Not Found'
+    return {
+      'title': title or '',
+      'meaning': meaning,
+      'preview': '\n'.join([f'{i + 1}. {meaning[i]}' for i in range(len(meaning))]),
+      'status_code': 200
+    }
+  except Exception as e:
+    if try_again > 0:
+      soup = bs(sess.get(f'https://dictionary.cambridge.org/spellcheck/english-chinese-simplified/?q={text}').text, 'html.parser')
+      text = soup.find('li', {'class': 'lbt lp-5 lpl-20'}).find('a').string
+      if text: return get_meaning(lang, text, False)
+    return {
+      'title': '404 Page Not Found',
+      'meaning': [],
+      'preview': 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.',
+      'status_code': 404
+    }
+
 @app.route('/')
 def route_index():
-  return render_template('index.html')
+  return render_template('index.html', query=request.args.get('q') or '')
 
 @app.route('/api', methods=['GET', 'POST'])
 def route_api():
-  lang = request.args.get('lang') or 'english-chinese-simplified'
-  text = request.args.get('text') or ''
-  soup = bs(sess.get(f"https://dictionary.cambridge.org/dictionary/{lang}/{text}").text, 'html.parser')
-  try: text = soup.find('span', {'class': 'hw dhw'}).string
-  except: pass
-  soup = [i.string for i in soup.find_all('span', {'class': 'trans dtrans dtrans-se break-cj'})]
+  res = get_meaning(request.args.get('lang'), request.args.get('text'))
   if request.method == 'GET':
-    return render_template('result.html', text=text, result=json.dumps(soup, separators=(',',':'), ensure_ascii=False))
+    return render_template('result.html', data=res), res['status_code']
   else:
-    return '\n'.join([f'{i+1}. {soup[i]}' for i in range(len(soup))])
+    return res['preview'], res['status_code']
 
 @app.route('/random-bg')
 def route_random_bg():
