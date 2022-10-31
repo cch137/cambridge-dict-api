@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Cambridge Dictionary API</title>
+  <meta charset="UTF-8"/>
+  <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport"/>
+  <meta content="Made by CCH" name="description"/>
+  <meta content="CCH, dictionary" name="keywords"/>
+  <meta content="CCH" name="author"/>
+  <meta content="Cambridge Dictionary API" property="og:title"/>
+  <meta content="The space of CCH" property="og:description"/>
+  <meta content="/static/og-image.png" property="og:image"/>
+  <meta content="CCH" property="og:site_name"/>
+  <meta content="website" property="og:type"/>
+  <link rel="stylesheet" href="/static/main.css">
+</head>
+<body class="no-select">
+  <div id="view" class="pg-ct core-item flex-ct flex-col">
+    <div id="pagetitle">Dictionary</div>
+    <div class="flex w-100">
+      <input id="search-box" class="flex-1" type="search" autocomplete="off" placeholder="search" class="core-item">
+    </div>
+  </div>
+  <a href="/admin137" class="pg-btm command to-admin-btn">admin dashboard</a>
+  <script>
+    function random_64base(digit = 8) {
+      let s = '';
+      while (digit--) s += ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_')[Math.floor(Math.random()*64)];
+      return s;
+    };
+    (() => {
+      const searchBox = document.querySelector('input');
+      searchBox.onkeypress = (e) => {
+        if (e.key == 'Enter') {
+          window.open(`/api?lang=english-chinese-simplified&text=${searchBox.value}`, '_blank')
+        };
+      };
+    })();
+  </script>
+</body>
+</html>

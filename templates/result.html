@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>{{text}}</title>
+  <meta charset="UTF-8"/>
+  <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport"/>
+  <meta content="Made by CCH" name="description"/>
+  <meta content="CCH, dictionary" name="keywords"/>
+  <meta content="CCH" name="author"/>
+  <meta content="Cambridge Dictionary API" property="og:title"/>
+  <meta content="The space of CCH" property="og:description"/>
+  <meta content="/static/og-image.png" property="og:image"/>
+  <meta content="CCH" property="og:site_name"/>
+  <meta content="website" property="og:type"/>
+  <link rel="stylesheet" href="/static/main.css">
+  <script type="application/json">{{result | safe}}</script>
+</head>
+<body>
+  <div style="margin: 120px auto;" class="core-item">
+    <h1>{{text}}</h1>
+    <ol id="list"></ol>
+  </div>
+  <script>
+    (() => {
+      const items = JSON.parse(document.querySelector('script[type="application/json"]').innerText);
+      let content = '';
+      for (const i of items) content += `<li>${i}</li>`;
+      document.getElementById('list').innerHTML = content;
+    })();
+  </script>
+</body>
+</html>

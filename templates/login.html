@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Login - Cambridge Dictionary API</title>
+  <meta charset="UTF-8"/>
+  <meta content="width=device-width, initial-scale=1, user-scalable=no" name="viewport"/>
+  <meta content="Made by CCH" name="description"/>
+  <meta content="CCH, dictionary" name="keywords"/>
+  <meta content="CCH" name="author"/>
+  <meta content="Cambridge Dictionary API" property="og:title"/>
+  <meta content="The space of CCH" property="og:description"/>
+  <meta content="/static/og-image.png" property="og:image"/>
+  <meta content="CCH" property="og:site_name"/>
+  <meta content="website" property="og:type"/>
+  <script src="/static/main.js"></script>
+  <script>
+    window.onload = () => {
+      const n = 'cd-api-admin';
+      if (cookies.hasItem(n)) if (cookies.getItem(n)) alert('Password incorrect.'); cookies.removeItem(n);
+      cookies.setItem(n, prompt('Password: '));
+      location = '';
+    };
+  </script>
+</head>
+</html>

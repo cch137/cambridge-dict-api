@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+HK&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+@font-face {
+  font-family: "MiSans";
+  src: url("/static/fonts/MiSans/MiSans-Normal.ttf") format("truetype");
+}
+
+body {
+  margin: auto;
+  overflow: hidden;
+  color: #fff;
+  background-color: #121316;
+  --font: 'MiSans','Roboto','Noto Sans SC','Noto Sans TC','Noto Sans HK','Noto Sans JP','Noto Sans KR','Microsoft YaHei',serif;
+  font-family: var(--font);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#pagetitle {
+  margin-top: 0;
+  font-size: 42px;
+  font-weight: bold;
+  opacity: 0.8;
+}
+
+#search-box {
+  border: none;
+  outline: none;
+  padding: 8px 16px;
+  margin: 24px;
+  background-color: #00000088;
+  color: white;
+  font-family: var(--font);
+  font-size: 24px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.core-item {
+  width: 85%;
+  max-width: 800px;
+}
+
+.no-select {
+  user-select: none;
+}
+
+.to-admin-btn {
+  margin: 8px 0;
+  color: inherit;
+}
+
+.adm-btn {
+  cursor: pointer;
+  width: 100%;
+  background-color: #ffffff09;
+  margin: 16px 0;
+  padding: 20px 40px;
+  font-size: 24px;
+  border-radius: 12px;
+  transition: 0.2s;
+}
+
+.adm-btn:hover {
+  background-color: #ffffff10;
+}
+
+#dashboard {
+  user-select: none;
+}
+
+#message {
+  margin: 8px 0;
+  text-align: center;
+}
+
+#message:empty {display: none;}
+
+.flex-ct {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.pg-ct {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pg-btm {
+  position: absolute;
+  bottom: 0%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+
+.tx-ct {
+  text-align: center;
+}
+
+.adm-btn-icon {
+  margin-right: 10px;
+  height: 32px;
+}
+
+.github-icon-bg {
+  background-color: #00000050;
+  border-radius: 50%;
+}
+
+.error {
+  color: red;
+}
+
+.warn {
+  color: orange;
+}
+
+.success {
+  color: greenyellow;
+}
+
+.command {
+  color: #666;
+}
