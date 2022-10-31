@@ -11,7 +11,7 @@ def admin_before_request():
     if request.method == 'GET': return render_template('login.html')
     else: return 'You are not logined.'
 
-@admin.route('/admin137')
+@admin.route('/admin137/')
 def route_admin():
   return render_template('admin.html')
 

@@ -64,10 +64,8 @@ def route_index():
 @app.route('/api', methods=['GET', 'POST'])
 def route_api():
   res = get_meaning(request.args.get('lang'), request.args.get('text'))
-  if request.method == 'GET':
-    return render_template('result.html', data=res), res['status_code']
-  else:
-    return res['preview'], res['status_code']
+  if request.method == 'POST' or request.args('raw'): return res['preview'], res['status_code']
+  else: return render_template('result.html', data=res), res['status_code']
 
 @app.route('/favicon.ico')
 def route_favicon():
