@@ -1,7 +1,7 @@
 from flask import Blueprint, request, render_template
 admin = Blueprint('admin', __name__)
 import os, time
-from app import my_token
+from app import my_token, del_temp
 
 
 @admin.before_request
@@ -17,6 +17,7 @@ def route_admin():
 
 @admin.route('/push', methods=['POST'])
 def route_push():
+  del_temp()
   os.system('pipreqs --encoding=utf8 --force .')
   os.system('git add .')
   os.system(f'git commit -am "update on {time.strftime("%Y/%m/%d, %H:%M:%S")}"')

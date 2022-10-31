@@ -23,6 +23,10 @@ sess.headers = {
 }
 temp_root = 'responses'
 
+def del_temp():
+  shutil.rmtree('__pycache__', ignore_errors=True)
+  shutil.rmtree(temp_root, ignore_errors=True)
+
 def get_meaning(lang: str = 'english-chinese-simplified', text: str = '', try_again: bool = True):
   fp = f'{temp_root}/{text}.json'
   if has_path(fp): return read_json(fp)
@@ -52,7 +56,6 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = '', try_ag
   write_json(fp, data)
   return data
 
-
 @app.route('/')
 def route_index():
   return render_template('index.html', query=request.args.get('q') or '')
@@ -69,13 +72,13 @@ def route_api():
 def route_favicon():
   return send_file(f'static/favicon.ico')
 
+
 import gunicorn
 from admin import admin
 
 app.register_blueprint(admin, url_prefix='')
 
-shutil.rmtree('__pycache__', ignore_errors=True)
-shutil.rmtree(temp_root, ignore_errors=True)
+del_temp()
 
 if __name__ == '__main__':
   app.run(debug=True, threaded=True, port=3000)
