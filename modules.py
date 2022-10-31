@@ -3,6 +3,9 @@ import json, os
 def has_path(fp: str) -> bool:
   return os.path.exists(fp)
 
+def get_ctime(fp: str) -> float:
+  return os.stat(fp).st_ctime
+
 def read_file(fp: str) -> str:
   return open(fp, mode='r', encoding='utf-8').read()
 

@@ -1,8 +1,8 @@
 from flask import Flask, request, send_file, render_template
-import requests, shutil
+import requests, shutil, time
 from bs4 import BeautifulSoup as bs
 
-from modules import has_path, read_json, write_json
+from modules import has_path, get_ctime, read_json, write_json
 
 
 app = Flask(__name__)
@@ -29,7 +29,8 @@ def del_temp():
 
 def get_meaning(lang: str = 'english-chinese-simplified', text: str = '', try_again: bool = True):
   fp = f'{temp_root}/{text}.json'
-  if has_path(fp): return read_json(fp)
+  if has_path(fp):
+    if time.time() - get_ctime(fp) > 3600: return read_json(fp) # 缓存一个小时过后无效
   reqt = sess.get(f"https://dictionary.cambridge.org/dictionary/{lang}/{text}")
   soup = bs(reqt.text, 'html.parser')
   try:
