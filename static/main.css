@@ -23,6 +23,10 @@ body {
   box-sizing: border-box;
 }
 
+a {
+  color: inherit;
+}
+
 #pagetitle {
   margin-top: 0;
   font-size: 42px;
@@ -33,12 +37,13 @@ body {
 #search-box {
   border: none;
   outline: none;
-  padding: 8px 16px;
+  padding: 12px 16px 12px 32px;
   margin: 24px;
   background-color: #00000077;
   color: #fff;
   font-family: var(--font);
-  font-size: 24px;
+  font-size: 22px;
+  border-radius: 32px;
 }
 
 #search-btn {
@@ -57,6 +62,32 @@ body {
   filter: brightness(0.75);
 }
 
+.back-btn {
+  height: 48px;
+  opacity: 0.8;
+}
+
+.back-icon {
+  --sz: 28px;
+  height: var(--sz);
+  width: var(--sz);
+  fill: #fff;
+  margin-right: 4px;
+}
+
+.back-btn a {
+  padding: 16px;
+  text-decoration: none;
+  user-select: none;
+  cursor: pointer;
+  transition: 0.2s;
+  filter: brightness(0.75);
+}
+
+.back-btn a:hover {
+  filter: brightness(1);
+}
+
 .w-100 {
   width: 100%;
 }
@@ -70,9 +101,8 @@ body {
   user-select: none;
 }
 
-.to-admin-btn {
+.index-btn-list {
   margin: 8px 0;
-  color: inherit;
   opacity: 0.5;
 }
 

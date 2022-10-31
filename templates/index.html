@@ -24,17 +24,24 @@
       </div>
     </div>
   </div>
-  <a href="/admin137" class="pg-btm command to-admin-btn">admin dashboard</a>
+  <div class="pg-btm command index-btn-list">
+    <a href="/admin137">admin dashboard</a>
+    <span> · </span>
+    <a href="https://ai137.onrender.com">AI137</a>
+  </div>
   <script>
     (() => {
       const searchBox = document.querySelector('input'), pathname = location.pathname;
+      function get_value() {return searchBox.value.trim()};
+      function go_page(v) {
+        if (v) location = `/api?lang=english-chinese-simplified&text=${v}`;
+      };
       searchBox.onkeyup = (e) => {
-        const v = searchBox.value.trim();
-        if (e.key == 'Enter' && v) {
-          window.open(`/api?lang=english-chinese-simplified&text=${v}`, '_blank')
-        };
+        const v = get_value();
+        if (e.key == 'Enter') go_page(v);
         history.replaceState(0, 0, `${pathname}?q=${v}`);
       };
+      document.getElementById('search-btn').onclick = () => {go_page(get_value())};
     })();
   </script>
 </body>

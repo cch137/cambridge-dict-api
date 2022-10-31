@@ -28,9 +28,12 @@ def del_temp():
   shutil.rmtree(temp_root, ignore_errors=True)
 
 def get_meaning(lang: str = 'english-chinese-simplified', text: str = '', try_again: bool = True):
+  text = text.strip()
   fp = f'{temp_root}/{text}.json'
   if has_path(fp):
-    if time.time() - get_ctime(fp) > 3600: return read_json(fp) # 缓存一个小时过后无效
+    if time.time() - get_ctime(fp) < 3600:
+      print('send from temp')
+      return read_json(fp) # 缓存一个小时过后无效
   reqt = sess.get(f"https://dictionary.cambridge.org/dictionary/{lang}/{text}")
   soup = bs(reqt.text, 'html.parser')
   try:
@@ -54,7 +57,9 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = '', try_ag
       'preview': 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.',
       'status_code': 404
     }
-  write_json(fp, data)
+  print(fp)
+  try: write_json(fp, data)
+  except Exception as e: print(e)
   return data
 
 @app.route('/')
@@ -64,7 +69,7 @@ def route_index():
 @app.route('/api', methods=['GET', 'POST'])
 def route_api():
   res = get_meaning(request.args.get('lang'), request.args.get('text'))
-  if request.method == 'POST' or request.args('raw'): return res['preview'], res['status_code']
+  if request.method == 'POST' or request.args.get('raw'): return res['preview'], res['status_code']
   else: return render_template('result.html', data=res), res['status_code']
 
 @app.route('/favicon.ico')

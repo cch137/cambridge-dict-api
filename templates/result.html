@@ -15,7 +15,13 @@
   <link rel="stylesheet" href="/static/main.css">
 </head>
 <body>
-  <div style="margin: 120px auto;" class="core-item">
+  <div class="back-btn flex-lf">
+    <a class="flex-ct" href="/" target="_self">
+      <svg class="back-icon" viewBox="0 0 48 48"><path d="M24 40 8 24 24 8l2.1 2.1-12.4 12.4H40v3H13.7l12.4 12.4Z"/></svg>
+      <div>Back</div>
+    </a>
+  </div>
+  <div style="margin: 100px auto;" class="core-item">
     <h1>{{ data['title'] }}</h1>
     {% if data['status_code'] == 200 -%}
     <ol id="list">
