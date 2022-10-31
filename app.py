@@ -48,7 +48,7 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = '', try_ag
     }
   except Exception as e:
     if try_again > 0:
-      soup = bs(sess.get(f'https://dictionary.cambridge.org/spellcheck/english-chinese-simplified/?q={text}').text, 'html.parser')
+      soup = bs(sess.get(f'https://dictionary.cambridge.org/spellcheck/{lang}/?q={text}').text, 'html.parser')
       text = soup.find('li', {'class': 'lbt lp-5 lpl-20'}).find('a').string
       if text: return get_meaning(lang, text, False)
     data = {
@@ -68,7 +68,7 @@ def route_index():
 
 @app.route('/api', methods=['GET', 'POST'])
 def route_api():
-  res = get_meaning(request.args.get('lang'), request.args.get('text'))
+  res = get_meaning(request.args.get('lang') or 'english-chinese-simplified', request.args.get('text'))
   if request.method == 'POST' or request.args.get('raw'): return res['preview'], res['status_code']
   else: return render_template('result.html', data=res), res['status_code']
 
