@@ -21,11 +21,24 @@
       <div>Back</div>
     </a>
   </div>
-  <div style="margin: 100px auto;" class="core-item">
+  <div class="result-view core-item">
     <h1>{{ data['title'] }}</h1>
     {% if data['status_code'] == 200 -%}
     <ol id="list">
-      {%- for item in data['meaning'] %}<li>{{item}}</li>{%  endfor -%}
+      {%- for item in data['meaning'] %}
+      <li class="def-block">
+        <div class="def-en">{{ item['en'] }}</div>
+        <div class="def-trans">{{ item['tr'] }}</div>
+        {%- for sentence in item['eg'] %}
+        <ul class="example">
+          <li>
+            <div>{{ sentence['en'] }}</div>
+            <div>{{ sentence['tr'] }}</div>
+          </li>
+        </ul>
+        {%  endfor -%}
+      </li>
+      {%  endfor -%}
     </ol>{% else -%}
     <div>{{ data['preview'] }}</div>
     {% endif %}

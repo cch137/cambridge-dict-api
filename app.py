@@ -2,7 +2,7 @@ from flask import Flask, request, send_file, render_template
 import requests, shutil, time
 from bs4 import BeautifulSoup as bs
 
-from modules import has_path, get_ctime, read_json, write_json
+from modules import has_path, get_ctime, read_json, write_json, json_dumps
 
 
 app = Flask(__name__)
@@ -31,33 +31,43 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = '', try_ag
   text = text.strip()
   fp = f'{temp_root}/{text}.json'
   if has_path(fp):
-    if time.time() - get_ctime(fp) < 3600:
-      print('send from temp')
-      return read_json(fp) # 缓存一个小时过后无效
+    if time.time() - get_ctime(fp) < 3600: # 缓存在一个小时过后无效
+      return read_json(fp)
   reqt = sess.get(f"https://dictionary.cambridge.org/dictionary/{lang}/{text}")
   soup = bs(reqt.text, 'html.parser')
   try:
-    title = soup.find('span', {'class': 'hw dhw'}).string
-    meaning = [i.string for i in soup.find_all('span', {'class': 'trans dtrans dtrans-se break-cj'})]
+    title = soup.find('span', {'class': 'hw dhw'}).text
+    meaning = [i for i in soup.find_all('div', {'class': 'def-block ddef_block'})]
+    meaning = [{
+        'en': i.find('div', {'class': 'def ddef_d db'}).text,
+        'tr': i.find('span', {'class': 'trans dtrans dtrans-se break-cj'}).text,
+        'eg': [
+          {
+            'en': j.find('span', {'class': 'eg deg'}).text,
+            'tr': j.find('span', {'class': 'trans dtrans dtrans-se hdb break-cj'}).text
+          } for j in i.find_all('div', {'class': 'examp dexamp'})
+        ]
+      } for i in meaning]
     if reqt.status_code == 404 or not title: raise 'Page Not Found'
     data = {
       'title': title or '',
       'meaning': meaning,
-      'preview': '\n'.join([f'{i + 1}. {meaning[i]}' for i in range(len(meaning))]),
+      'preview': '\n'.join([f"{i + 1}. {meaning[i]['en']} {meaning[i]['tr']}" for i in range(len(meaning))]),
+      'trans': '\n'.join([i['tr'] for i in meaning]),
       'status_code': 200
     }
   except Exception as e:
     if try_again > 0:
       soup = bs(sess.get(f'https://dictionary.cambridge.org/spellcheck/{lang}/?q={text}').text, 'html.parser')
-      text = soup.find('li', {'class': 'lbt lp-5 lpl-20'}).find('a').string
+      text = soup.find('li', {'class': 'lbt lp-5 lpl-20'}).find('a').text
       if text: return get_meaning(lang, text, False)
     data = {
       'title': '404 Page Not Found',
       'meaning': [],
       'preview': 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.',
+      'trans': '',
       'status_code': 404
     }
-  print(fp)
   try: write_json(fp, data)
   except Exception as e: print(e)
   return data
@@ -68,8 +78,20 @@ def route_index():
 
 @app.route('/api', methods=['GET', 'POST'])
 def route_api():
-  res = get_meaning(request.args.get('lang') or 'english-chinese-simplified', request.args.get('text'))
-  if request.method == 'POST' or request.args.get('raw'): return res['preview'], res['status_code']
+  lang = request.args.get('lang') or 'english-chinese-simplified'
+  word = request.args.get('word')
+  _type = request.args.get('type') or 'preview'
+  res = get_meaning(lang, word)
+  code = res['status_code']
+  if _type != 'json': res = res[_type]
+  if _type == 'meaning' or _type == 'json': res = json_dumps(res)
+  return res, code
+
+@app.route('/dict/<lang>/<word>')
+def route_dict(lang, word):
+  res = get_meaning(lang or 'english-chinese-simplified', word)
+  if request.args.get('raw'): return res['preview'], res['status_code']
+  elif request.method == 'POST': return res['preview'], res['status_code']
   else: return render_template('result.html', data=res), res['status_code']
 
 @app.route('/favicon.ico')

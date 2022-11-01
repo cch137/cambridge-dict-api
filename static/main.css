@@ -11,12 +11,14 @@
 }
 
 body {
-  margin: auto;
-  overflow: hidden;
-  color: #fff;
-  background-color: #141920;
-  --font: 'MiSans','Roboto','Noto Sans SC','Noto Sans TC','Noto Sans HK','Noto Sans JP','Noto Sans KR','Microsoft YaHei',serif;
+  --bg-color: #141920;
+  --bg-color-op05: #141920cc;
+  --font: 'Roboto','Noto Sans SC','Noto Sans TC','Noto Sans HK','Noto Sans JP','Noto Sans KR','Microsoft YaHei',serif;
+  --theme-color: #b5bec7;
   font-family: var(--font);
+  margin: auto;
+  color: #fff;
+  background-color: var(--bg-color);
 }
 
 * {
@@ -44,6 +46,7 @@ a {
   font-family: var(--font);
   font-size: 22px;
   border-radius: 32px;
+  border: 1px solid #666;
 }
 
 #search-btn {
@@ -62,9 +65,17 @@ a {
   filter: brightness(0.75);
 }
 
+.result-view {
+  margin: 120px auto 180px;
+}
+
 .back-btn {
+  position: fixed;
+  top: 0;
+  left: 0;
   height: 48px;
   opacity: 0.8;
+  background-color: var(--bg-color-op05);
 }
 
 .back-icon {
@@ -88,12 +99,31 @@ a {
   filter: brightness(1);
 }
 
+.def-block {
+  margin-bottom: 32px;
+}
+
+.def-en, .def-trans {
+  margin: 4px 0;
+}
+
+.def-trans {
+  color: var(--theme-color);
+}
+
+.example {
+  font-style: italic;
+  color: #999;
+  margin: 12px 0;
+  list-style-type: '- ';
+}
+
 .w-100 {
   width: 100%;
 }
 
 .core-item {
-  width: 85%;
+  width: 92.5%;
   max-width: 800px;
 }
 
@@ -104,6 +134,10 @@ a {
 .index-btn-list {
   margin: 8px 0;
   opacity: 0.5;
+}
+
+.index-btn-list a {
+  margin: 0 8px;
 }
 
 .adm-btn {
@@ -153,6 +187,10 @@ a {
   flex: 1;
 }
 
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
 .pg-ct {
   position: absolute;
   top: 50%;
@@ -197,4 +235,35 @@ a {
 
 .command {
   color: #666;
+}
+
+/* scrollbar */
+
+:root {
+  --scrollbar-size: 10px;
+  --scrollbar-sz-mini: 5px;
+}
+
+::-webkit-scrollbar {
+  height: var(--scrollbar-size);
+  width: var(--scrollbar-size);
+}
+::-webkit-scrollbar-corner {
+  background: rgb(255, 255, 255, 0.15);
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.175);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+@media screen and (max-width:500px){
+  :root {
+    --view-width: 90vw;
+    --scrollbar-size: var(--scrollbar-sz-mini);
+  }
 }

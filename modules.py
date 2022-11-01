@@ -22,6 +22,9 @@ def write_file(fp: str, s: str):
     if not has_path(dir_fp): os.makedirs(dir_fp)
   open(fp, mode='w+', encoding='utf-8').write(s)
 
+def json_dumps(data) -> str:
+  return json.dumps(data, ensure_ascii=False, separators=(',',':'))
+
 def write_json(fp: str, data: dict):
   # 将物件写入 json 格式档案
-  write_file(fp, json.dumps(data, ensure_ascii=False, separators=(',',':')))
+  write_file(fp, json_dumps(data))
