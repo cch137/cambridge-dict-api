@@ -65,14 +65,14 @@
         }, (_diff / 60) * (5 + Math.random() * 5));
       };
       doc.getElementById('push').onclick = () => {
-        const xhr = post_xhr('/push'), t = (new Date()).getTime(), count = newEl('span', {class: 'command'}, 'Just now');
+        const xhr = post_xhr('/push'), count = newEl('span', {class: 'command'}, 'Just now');
         show_message('Pushing project to GitHub...', 'command');
         xhr.onload = () => {
           show_message(newEl('div', {class: 'success', title: 'on ' + (new Date()).toLocaleString()}, '', [
             newEl('span', {}, 'Success '),
             count
           ]))
-          run_timer(count, t);
+          run_timer(count, (new Date()).getTime());
         };
         xhr.onerror = () => {
           show_message(`Error (${xhr.status} ${xhr.statusText})`, 'warn');
