@@ -59,6 +59,12 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
     for i in range(len(meaning)):
       if meaning[i]['gram']: meaning[i]['gram'] = meaning[i]['gram'].text.replace('or', '/').replace(' ', '')
       else: meaning[i]['gram'] = ''
+      for j in range(len(meaning[i]['defs'])):
+        if meaning[i]['defs'][j]['tr'][-1] not in ['；', '。']:
+          if j + 1 == len(meaning[i]['defs']): 
+            meaning[i]['defs'][j]['tr'] += '。'
+          else:
+            meaning[i]['defs'][j]['tr'] += '；'
     if reqt.status_code == 404 or not title: raise 'Page Not Found'
     data = {
       'title': title or '',
@@ -74,6 +80,8 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
       meaning = []
       preview = 'We cannot find any entries matching kvblkbana. Please check you have typed the word correctly.'
     else:
+      title = title.split(' ')
+      title = f"{' '.join(title[:3])} \"{' '.join(title[3:])}\""
       meaning = [i.find('a').text.strip() for i in soup.find_all('li', {'class': 'lbt lp-5 lpl-20'})]
       preview = 'We have these words with similar spellings or pronunciations:'
     data = {
@@ -93,9 +101,9 @@ def route_index():
 
 @app.route('/api', methods=['GET', 'POST'])
 def route_api():
-  lang = request.args.get('lang') or 'english-chinese-simplified'
-  word = request.args.get('word')
-  _type = request.args.get('type') or 'preview'
+  lang = request.args.get('lang') or request.args.get('l') or 'english-chinese-simplified'
+  word = request.args.get('word') or request.args.get('w')
+  _type = request.args.get('type') or request.args.get('t') or 'preview'
   res = get_meaning(lang, word)
   code = res['status_code']
   if _type != 'json': res = res[_type]
