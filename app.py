@@ -27,7 +27,7 @@ def del_temp():
   shutil.rmtree('__pycache__', ignore_errors=True)
   shutil.rmtree(temp_root, ignore_errors=True)
 
-def get_meaning(lang: str = 'english-chinese-simplified', text: str = '', try_again: bool = True):
+def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
   text = text.strip()
   fp = f'{temp_root}/{text}.json'
   if has_path(fp):
@@ -37,34 +37,49 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = '', try_ag
   soup = bs(reqt.text, 'html.parser')
   try:
     title = soup.find('span', {'class': 'hw dhw'}).text
-    meaning = [i for i in soup.find_all('div', {'class': 'def-block ddef_block'})]
-    meaning = [{
-        'en': i.find('div', {'class': 'def ddef_d db'}).text,
-        'tr': i.find('span', {'class': 'trans dtrans dtrans-se break-cj'}).text,
-        'eg': [
+    meaning = [
+      {
+        'word': i.find('span', {'class': 'hw dhw'}).text,
+        'pos': i.find('span', {'class': 'pos dpos'}).text,
+        'gram': i.find('span', {'class': 'gram dgram'}),
+        'defs': [
           {
-            'en': j.find('span', {'class': 'eg deg'}).text,
-            'tr': j.find('span', {'class': 'trans dtrans dtrans-se hdb break-cj'}).text
-          } for j in i.find_all('div', {'class': 'examp dexamp'})
+            'en': j.find('div', {'class': 'def ddef_d db'}).text,
+            'tr': j.find('span', {'class': 'trans dtrans dtrans-se break-cj'}).text,
+            'eg': [
+              {
+                'en': k.find('span', {'class': 'eg deg'}).text,
+                'tr': k.find('span', {'class': 'trans dtrans dtrans-se hdb break-cj'}).text
+              } for k in j.find_all('div', {'class': 'examp dexamp'})
+            ]
+          } for j in i.find_all('div', {'class': 'def-block ddef_block'})
         ]
-      } for i in meaning]
+      } for i in soup.find_all('div', {'class': 'pr entry-body__el'})
+    ]
+    for i in range(len(meaning)):
+      if meaning[i]['gram']: meaning[i]['gram'] = meaning[i]['gram'].text.replace('or', '/').replace(' ', '')
+      else: meaning[i]['gram'] = ''
     if reqt.status_code == 404 or not title: raise 'Page Not Found'
     data = {
       'title': title or '',
       'meaning': meaning,
-      'preview': '\n'.join([f"{i + 1}. {meaning[i]['en']} {meaning[i]['tr']}" for i in range(len(meaning))]),
-      'trans': '\n'.join([i['tr'] for i in meaning]),
+      'preview': ' '.join([' '.join([f"{j + 1}. {i['defs'][j]['en']} {i['defs'][j]['tr']}" for j in range(len(i['defs']))]) for i in meaning]),
+      'trans': '\n'.join(['\n'.join([j['tr'] for j in i['defs']]) for i in meaning]),
       'status_code': 200
     }
   except Exception as e:
-    if try_again > 0:
-      soup = bs(sess.get(f'https://dictionary.cambridge.org/spellcheck/{lang}/?q={text}').text, 'html.parser')
-      text = soup.find('li', {'class': 'lbt lp-5 lpl-20'}).find('a').text
-      if text: return get_meaning(lang, text, False)
+    soup = bs(sess.get(f'https://dictionary.cambridge.org/spellcheck/{lang}/?q={text}').text, 'html.parser')
+    title = soup.find('h1', {'class': 'lpb-10 lbb'}).text
+    if title == 'Your search terms did not match any entries.':
+      meaning = []
+      preview = 'We cannot find any entries matching kvblkbana. Please check you have typed the word correctly.'
+    else:
+      meaning = [i.find('a').text.strip() for i in soup.find_all('li', {'class': 'lbt lp-5 lpl-20'})]
+      preview = 'We have these words with similar spellings or pronunciations:'
     data = {
-      'title': '404 Page Not Found',
-      'meaning': [],
-      'preview': 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.',
+      'title': title,
+      'meaning': meaning,
+      'preview': preview,
       'trans': '',
       'status_code': 404
     }

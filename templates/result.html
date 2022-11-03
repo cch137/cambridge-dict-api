@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="/static/main.css">
 </head>
 <body>
-  <div class="back-btn flex-lf">
+  <div class="back-btn flex-lf w-100">
     <a class="flex-ct" href="/" target="_self">
       <svg class="back-icon" viewBox="0 0 48 48"><path d="M24 40 8 24 24 8l2.1 2.1-12.4 12.4H40v3H13.7l12.4 12.4Z"/></svg>
       <div>Back</div>
@@ -24,23 +24,41 @@
   <div class="result-view core-item">
     <h1>{{ data['title'] }}</h1>
     {% if data['status_code'] == 200 -%}
-    <ol id="list">
       {%- for item in data['meaning'] %}
-      <li class="def-block">
-        <div class="def-en">{{ item['en'] }}</div>
-        <div class="def-trans">{{ item['tr'] }}</div>
-        {%- for sentence in item['eg'] %}
-        <ul class="example">
-          <li>
-            <div>{{ sentence['en'] }}</div>
-            <div>{{ sentence['tr'] }}</div>
-          </li>
-        </ul>
+      <h2>{{ item['word'] }}</h2>
+      <div>
+        <span class="pos">{{ item['pos'] }}</span>
+        <a class="gram" target="_blank" href="https://dictionary.cambridge.org/help/codes.html">{{ item['gram'] }}</a>
+      </div>
+      <ol id="list">
+        {%- for _def in item['defs'] %}
+        <li class="def-block">
+          <div class="def-en">{{ _def['en'] }}</div>
+          <div class="def-trans">{{ _def['tr'] }}</div>
+          {%- for sentence in _def['eg'] %}
+          <ul class="example">
+            <li>
+              <div>{{ sentence['en'] }}</div>
+              <div>{{ sentence['tr'] }}</div>
+            </li>
+          </ul>
+          {%  endfor -%}
+        </li>
         {%  endfor -%}
-      </li>
+      </ol>
+      <hr>
       {%  endfor -%}
-    </ol>{% else -%}
-    <div>{{ data['preview'] }}</div>
+    {% else -%}
+      <div>{{ data['preview'] }}</div>
+      {% if data['meaning'].__len__() -%}
+      <ul>
+        {%- for item in data['meaning'] %}
+        <li class="suggestion">
+          <a href="./{{ item }}" target="_self">{{ item }}</a>
+        </li>
+        {%  endfor -%}
+      </ul>
+      {% endif %}
     {% endif %}
   </div>
 </body>

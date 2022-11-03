@@ -14,7 +14,7 @@ body {
   --bg-color: #141920;
   --bg-color-op05: #141920cc;
   --font: 'Roboto','Noto Sans SC','Noto Sans TC','Noto Sans HK','Noto Sans JP','Noto Sans KR','Microsoft YaHei',serif;
-  --theme-color: #b5bec7;
+  --theme-color: #ccdcf5;
   font-family: var(--font);
   margin: auto;
   color: #fff;
@@ -111,11 +111,34 @@ a {
   color: var(--theme-color);
 }
 
+.pos {
+  font-style: italic;
+  color: #bbb;
+}
+
+.gram {
+  color: #777;
+  margin-left: 4px;
+  text-decoration: none;
+}
+
+.gram:hover {
+  text-decoration: underline;
+}
+
 .example {
   font-style: italic;
-  color: #999;
+  color: #bbb;
   margin: 12px 0;
   list-style-type: '- ';
+}
+
+.suggestion {
+  margin: 8px 0;
+}
+
+hr {
+  opacity: 0.25;
 }
 
 .w-100 {
