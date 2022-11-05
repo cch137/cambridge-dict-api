@@ -17,6 +17,7 @@ def route_admin():
 
 @admin.route('/push', methods=['POST'])
 def route_push():
+  print('pushing project to GitHub...')
   del_temp()
   os.system('pipreqs --encoding=utf8 --force .')
   os.system('git add .')

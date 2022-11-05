@@ -36,7 +36,7 @@
   <script>
     (() => {
       const searchBox = document.querySelector('input'), pathname = location.pathname;
-      function get_value() {return searchBox.value.trim()};
+      function get_value() {return searchBox.value.trim().replaceAll('/', '').replaceAll('\\', '')};
       function go_page(v) {
         if (v) location = `/dict/english-chinese-simplified/${v}`;
       };

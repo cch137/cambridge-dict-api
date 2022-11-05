@@ -1,5 +1,5 @@
-from flask import Flask, request, send_file, render_template
-import requests, shutil, time
+from flask import Flask, request, send_file, render_template, redirect
+import requests, shutil, time, threading
 from bs4 import BeautifulSoup as bs
 
 from modules import has_path, get_ctime, read_json, write_json, json_dumps
@@ -42,6 +42,7 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
         'word': i.find('span', {'class': 'hw dhw'}).text,
         'pos': i.find('span', {'class': 'pos dpos'}).text,
         'gram': i.find('span', {'class': 'gram dgram'}),
+        'guide': i.find('span', {'class': 'guideword dsense_gw'}),
         'defs': [
           {
             'en': j.find('div', {'class': 'def ddef_d db'}).text,
@@ -59,6 +60,8 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
     for i in range(len(meaning)):
       if meaning[i]['gram']: meaning[i]['gram'] = meaning[i]['gram'].text.replace('or', '/').replace(' ', '')
       else: meaning[i]['gram'] = ''
+      if meaning[i]['guide']: meaning[i]['guide'] = meaning[i]['guide'].text
+      else: meaning[i]['guide'] = ''
       for j in range(len(meaning[i]['defs'])):
         if meaning[i]['defs'][j]['tr'][-1] not in ['；', '。']:
           if j + 1 == len(meaning[i]['defs']): 
@@ -68,6 +71,8 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
     if reqt.status_code == 404 or not title: raise 'Page Not Found'
     data = {
       'title': title or '',
+      'lang': lang,
+      'word': text,
       'meaning': meaning,
       'preview': ' '.join([' '.join([f"{j + 1}. {i['defs'][j]['en']} {i['defs'][j]['tr']}" for j in range(len(i['defs']))]) for i in meaning]),
       'trans': '\n'.join(['\n'.join([j['tr'] for j in i['defs']]) for i in meaning]),
@@ -86,6 +91,8 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
       preview = 'We have these words with similar spellings or pronunciations:'
     data = {
       'title': title,
+      'lang': lang,
+      'word': text,
       'meaning': meaning,
       'preview': preview,
       'trans': '',
@@ -102,7 +109,7 @@ def route_index():
 @app.route('/api', methods=['GET', 'POST'])
 def route_api():
   lang = request.args.get('lang') or request.args.get('l') or 'english-chinese-simplified'
-  word = request.args.get('word') or request.args.get('w')
+  word = (request.args.get('word') or request.args.get('w')).replace('/', '').replace('\\', '')
   _type = request.args.get('type') or request.args.get('t') or 'preview'
   res = get_meaning(lang, word)
   code = res['status_code']
@@ -112,7 +119,7 @@ def route_api():
 
 @app.route('/dict/<lang>/<word>')
 def route_dict(lang, word):
-  res = get_meaning(lang or 'english-chinese-simplified', word)
+  res = get_meaning(lang or 'english-chinese-simplified', word.replace('/', '').replace('\\', ''))
   if request.args.get('raw'): return res['preview'], res['status_code']
   elif request.method == 'POST': return res['preview'], res['status_code']
   else: return render_template('result.html', data=res), res['status_code']
@@ -120,6 +127,23 @@ def route_dict(lang, word):
 @app.route('/favicon.ico')
 def route_favicon():
   return send_file(f'static/favicon.ico')
+
+class WakeUpThread(threading.Thread):
+  def __init__(self, path: str, gap: float = 900):
+    threading.Thread.__init__(self)
+    self.path = path
+    self.gap = gap
+  def run(self):
+    time.sleep(self.gap)
+    try: 
+      requests.post(self.path, data={'path': 'https://ai137-dict.onrender.com/wakeup'})
+      print('wake up:', self.path)
+    except: pass
+@app.route('/wakeup', methods=['POST'])
+def route_wakeup():
+  WakeUpThread(request.form.get('path'), 900).start()
+  return 'success'
+WakeUpThread('https://ai137.onrender.com/wakeup', 0).start()
 
 
 import gunicorn

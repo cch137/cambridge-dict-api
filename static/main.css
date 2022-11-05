@@ -111,15 +111,12 @@ a {
   color: var(--theme-color);
 }
 
-.pos {
-  font-style: italic;
+.pos, .guide, .example {
   color: #bbb;
 }
 
-.gram {
-  color: #777;
-  margin-left: 4px;
-  text-decoration: none;
+.pos, .example {
+  font-style: italic;
 }
 
 .gram:hover {
@@ -127,10 +124,18 @@ a {
 }
 
 .example {
-  font-style: italic;
-  color: #bbb;
   margin: 12px 0;
   list-style-type: '- ';
+}
+
+.gram, .source {
+  color: #777;
+  margin: 0 4px;
+  text-decoration: none;
+}
+
+.source {
+  margin-top: 96px;
 }
 
 .suggestion {
@@ -138,6 +143,7 @@ a {
 }
 
 hr {
+  margin-top: 64px;
   opacity: 0.25;
 }
 

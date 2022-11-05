@@ -3,8 +3,8 @@
 <head>
   <title>{{ data['title'] }}</title>
   <meta content="{{ data['title'] }}" property="og:title"/>
-  <meta content="{{ data['preview'] }}" name="description"/>
-  <meta content="{{ data['preview'] }}" property="og:description"/>
+  <meta content="{{ data['preview'][:240] }}" name="description"/>
+  <meta content="{{ data['preview'][:240] }}" property="og:description"/>
   <meta content="/static/og-image.jpg" property="og:image"/>
   <meta content="website" property="og:type"/>
   <meta content="Cambridge Dictionary API" property="og:site_name"/>
@@ -22,27 +22,27 @@
     </a>
   </div>
   <div class="result-view core-item">
-    <h1>{{ data['title'] }}</h1>
     {% if data['status_code'] == 200 -%}
       {%- for item in data['meaning'] %}
-      <h2>{{ item['word'] }}</h2>
+      <h1>{{ item['word'] }}</h1>
       <div>
-        <span class="pos">{{ item['pos'] }}</span>
+        <span class="pos" title="A word that describes a noun or pronoun.">{{ item['pos'] }}</span>
         <a class="gram" target="_blank" href="https://dictionary.cambridge.org/help/codes.html">{{ item['gram'] }}</a>
+        <span class="guide" title="Guide word: helps you find the right meaning when a word has more than one meaning">{{ item['guide'] }}</span>
       </div>
       <ol class="list">
         {%- for _def in item['defs'] %}
         <li class="def-block">
           <div class="def-en">{{ _def['en'] }}</div>
           <div class="def-trans">{{ _def['tr'] }}</div>
+          <ul>
           {%- for sentence in _def['eg'] %}
-          <ul class="example">
-            <li>
+            <li class="example">
               <div>{{ sentence['en'] }}</div>
               <div>{{ sentence['tr'] }}</div>
             </li>
-          </ul>
           {%  endfor -%}
+          </ul>
         </li>
         {%  endfor -%}
       </ol>
@@ -60,6 +60,10 @@
       </ul>
       {% endif %}
     {% endif %}
+    <div class="source">
+      <span>source: </span>
+      <a target="_blank" href="https://dictionary.cambridge.org/dictionary/{{ data['lang'] }}/{{ data['word'] }}">https://dictionary.cambridge.org/dictionary/{{ data['lang'] }}/{{ data['word'] }}</a>
+    </div>
   </div>
 </body>
 </html>
