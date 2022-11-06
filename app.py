@@ -128,27 +128,9 @@ def route_dict(lang, word):
 def route_favicon():
   return send_file(f'static/favicon.ico')
 
-last_wakeup = 0
-class WakeUpThread(threading.Thread):
-  def __init__(self, path: str, gap: float = 900):
-    threading.Thread.__init__(self)
-    self.path = path
-    self.gap = gap
-  def run(self):
-    time.sleep(self.gap)
-    try: 
-      requests.post(self.path, data={'path': 'https://ai137-dict.onrender.com/wakeup'})
-      print('wake up:', self.path)
-    except: pass
 @app.route('/wakeup', methods=['POST'])
 def route_wakeup():
-  path = request.form.get('path')
-  if path:
-    if time.time() - last_wakeup < 900:
-      return 'Interval Too Brief', 423
-    WakeUpThread(path, 900).start()
   return 'success', 200
-WakeUpThread('https://ai137.onrender.com/wakeup', 0).start()
 
 
 import gunicorn
