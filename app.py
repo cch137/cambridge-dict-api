@@ -75,7 +75,8 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
       'word': text,
       'meaning': meaning,
       'preview': ' '.join([' '.join([f"{j + 1}. {i['defs'][j]['en']} {i['defs'][j]['tr']}" for j in range(len(i['defs']))]) for i in meaning]),
-      'trans': '\n'.join(['\n'.join([j['tr'] for j in i['defs']]) for i in meaning])
+      'trans': '\n'.join(['\n'.join([j['tr'] for j in i['defs']]) for i in meaning]),
+      'status_code': 200
     }
   except Exception as e:
     soup = bs(sess.get(f'https://dictionary.cambridge.org/spellcheck/{lang}/?q={text}').text, 'html.parser')
@@ -94,7 +95,8 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
       'word': text,
       'meaning': meaning,
       'preview': preview,
-      'trans': ''
+      'trans': '',
+      'status_code': 404
     }
   try: write_json(fp, data)
   except Exception as e: print(e)
