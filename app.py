@@ -75,8 +75,7 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
       'word': text,
       'meaning': meaning,
       'preview': ' '.join([' '.join([f"{j + 1}. {i['defs'][j]['en']} {i['defs'][j]['tr']}" for j in range(len(i['defs']))]) for i in meaning]),
-      'trans': '\n'.join(['\n'.join([j['tr'] for j in i['defs']]) for i in meaning]),
-      'status_code': 200
+      'trans': '\n'.join(['\n'.join([j['tr'] for j in i['defs']]) for i in meaning])
     }
   except Exception as e:
     soup = bs(sess.get(f'https://dictionary.cambridge.org/spellcheck/{lang}/?q={text}').text, 'html.parser')
@@ -95,8 +94,7 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
       'word': text,
       'meaning': meaning,
       'preview': preview,
-      'trans': '',
-      'status_code': 404
+      'trans': ''
     }
   try: write_json(fp, data)
   except Exception as e: print(e)
@@ -112,17 +110,16 @@ def route_api():
   word = (request.args.get('word') or request.args.get('w')).replace('/', '').replace('\\', '')
   _type = request.args.get('type') or request.args.get('t') or 'preview'
   res = get_meaning(lang, word)
-  code = res['status_code']
   if _type != 'json': res = res[_type]
   if _type == 'meaning' or _type == 'json': res = json_dumps(res)
-  return res, code
+  return res
 
 @app.route('/dict/<lang>/<word>')
 def route_dict(lang, word):
   res = get_meaning(lang or 'english-chinese-simplified', word.replace('/', '').replace('\\', ''))
-  if request.args.get('raw'): return res['preview'], res['status_code']
-  elif request.method == 'POST': return res['preview'], res['status_code']
-  else: return render_template('result.html', data=res), res['status_code']
+  if request.args.get('raw'): return res['preview']
+  elif request.method == 'POST': return res['preview']
+  else: return render_template('result.html', data=res)
 
 @app.route('/favicon.ico')
 def route_favicon():
@@ -130,7 +127,7 @@ def route_favicon():
 
 @app.route('/wakeup', methods=['POST'])
 def route_wakeup():
-  return 'success', 200
+  return 'success'
 
 
 import gunicorn
