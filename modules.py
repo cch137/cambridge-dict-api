@@ -1,7 +1,11 @@
 import json, os
 
+
 def has_path(fp: str) -> bool:
   return os.path.exists(fp)
+
+def ensure_dir(fp: str) -> bool:
+  if not has_path(fp): os.makedirs(fp)
 
 def get_ctime(fp: str) -> float:
   return os.stat(fp).st_ctime

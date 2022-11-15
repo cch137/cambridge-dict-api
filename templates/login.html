@@ -17,7 +17,7 @@
     window.onload = () => {
       const n = 'cd-api-admin';
       if (cookies.hasItem(n)) if (cookies.getItem(n)) alert('Password incorrect.'); cookies.removeItem(n);
-      cookies.setItem(n, prompt('Password: '));
+      cookies.setItem(n, prompt('Password: '), Infinity, '/');
       location = '';
     };
   </script>

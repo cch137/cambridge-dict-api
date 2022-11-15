@@ -75,7 +75,7 @@ def get_meaning(lang: str = 'english-chinese-simplified', text: str = ''):
       'word': text,
       'meaning': meaning,
       'preview': ' '.join([' '.join([f"{j + 1}. {i['defs'][j]['en']} {i['defs'][j]['tr']}" for j in range(len(i['defs']))]) for i in meaning]),
-      'trans': '\n'.join(['\n'.join([j['tr'] for j in i['defs']]) for i in meaning]),
+      'trans': '\n'.join([f"[{i['pos']}]" + '\n' + '\n'.join([j['tr'] for j in i['defs']]) + '\n' for i in meaning]),
       'status_code': 200
     }
   except Exception as e:
@@ -135,7 +135,7 @@ def route_wakeup():
 import gunicorn
 from admin import admin
 
-app.register_blueprint(admin, url_prefix='')
+app.register_blueprint(admin, url_prefix='/')
 
 del_temp()
 
