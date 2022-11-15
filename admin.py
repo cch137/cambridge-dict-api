@@ -7,7 +7,6 @@ from app import my_token, del_temp
 @admin.before_request
 def admin_before_request():
   adm_key = request.cookies.get('cd-api-admin')
-  print(adm_key)
   if adm_key != my_token:
     if request.method == 'GET': return render_template('login.html')
     else: return 'You are not logined.', 401
